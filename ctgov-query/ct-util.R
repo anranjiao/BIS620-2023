@@ -1,42 +1,18 @@
-query_kwds <- function(tbl, kwds, column, ignore_case = TRUE, match_all = FALSE) {
-  kwds <- paste0("%", kwds, "%") |>
-    gsub("'", "''", x = _)
-  if (ignore_case) {
-    like <- " ilike "
-  } else{
-    like <- " like "
-  }
-  query <- paste(
-    paste0(column, like, "'", kwds, "'"),
-    collapse = ifelse(match_all, " AND ", " OR ")
-  )
-  
-  dplyr::filter(tbl, dplyr::sql(query))
-}
 
-title_kw_search = function(studies, kw) {
-  query_kwds(studies, kw, "brief_title", match_all = TRUE) |>
-    collect()
-}
-
-cumulative_studies = function(s) {
-  
-}
-
-create_phase_histogram_plot = function(studies, brief_title_kw) { #added
-  d = title_kw_search(studies, brief_title_kw) |>
-    head(1000)
-  d$phase[is.na(d$phase)] = "NA"
-  d = d |>
-    select(phase) |>
-    group_by(phase) |>
-    summarize(n = n())
-  ggplot(d, aes(x = phase, y = n)) +
-    geom_col() +
-    theme_bw() +
-    xlab("Phase") +
-    ylab("Count")
-}
+# create_phase_histogram_plot = function(studies, brief_title_kw) { #added
+#   d = title_kw_search(studies, brief_title_kw) |>
+#     head(1000)
+#   d$phase[is.na(d$phase)] = "NA"
+#   d = d |>
+#     select(phase) |>
+#     group_by(phase) |>
+#     summarize(n = n())
+#   ggplot(d, aes(x = phase, y = n)) +
+#     geom_col() +
+#     theme_bw() +
+#     xlab("Phase") +
+#     ylab("Count")
+# }
 
 create_endpoint_histogram = function(studies, endpoints, kw) {
   em = query_kwds(studies, kw, "brief_title", match_all = TRUE) |>
@@ -56,7 +32,7 @@ create_endpoint_histogram = function(studies, endpoints, kw) {
 # 10/11/2023
 con = dbConnect(
   duckdb(
-    file.path("..", "..", "duckdb", "ctgov.duckdb"), 
+    file.path("..", "ctrialsgovdb", "ctrialsgov.duckdb"), 
     read_only = TRUE
   )
 )
@@ -90,6 +66,27 @@ query_kwds <- function(d, kwds, column, ignore_case = TRUE, match_all = FALSE) {
     collapse = ifelse(match_all, " AND ", " OR ")
   )
   filter(d, sql(query)) 
+}
+
+query_kwds <- function(tbl, kwds, column, ignore_case = TRUE, match_all = FALSE) {
+  kwds <- paste0("%", kwds, "%") |>
+    gsub("'", "''", x = _)
+  if (ignore_case) {
+    like <- " ilike "
+  } else{
+    like <- " like "
+  }
+  query <- paste(
+    paste0(column, like, "'", kwds, "'"),
+    collapse = ifelse(match_all, " AND ", " OR ")
+  )
+  
+  dplyr::filter(tbl, dplyr::sql(query))
+}
+
+title_kw_search = function(studies, kw) {
+  query_kwds(studies, kw, "brief_title", match_all = TRUE) |>
+    collect()
 }
 
 # Create a histogram of the phases returned by a brief title keyword search

@@ -42,7 +42,7 @@ max_num_studies = 1000
 
 con = dbConnect(
   duckdb(
-    file.path("..", "..", "duckdb", "ctgov.duckdb"), 
+    file.path("..", "ctrialsgovdb", "ctrialsgov.duckdb"), 
     read_only = TRUE
   )
 )
@@ -51,7 +51,7 @@ studies = tbl(con, "studies")
 sponsors = tbl(con, "sponsors")
 
 
-ctgov_load_duckdb_file(file.path("..", "..", "duckdb", "ctgov-derived.duckdb")) #derived data
+ctgov_load_duckdb_file(file.path("..", "ctrialsgovdb", "ctgov-derived.duckdb")) #derived data
 
 endpoints = ctgov_query_endpoint()
 
@@ -87,7 +87,7 @@ ui <- fluidPage(
     mainPanel(
       tabsetPanel(
         type = "tabs",
-        tabPanel("Plot", plotOutput("distPlot")),
+        #tabPanel("Plot", plotOutput("distPlot")),
         tabPanel("Endpoint Met", plotOutput("endpointPlot")),
         tabPanel("Phase", plotOutput("phase_plot")),
         tabPanel("Concurrent", plotOutput("concurrent_plot"))
@@ -100,10 +100,10 @@ ui <- fluidPage(
 # Define server logic required to draw a histogram
 server <- function(input, output) {
   
-  output$distPlot <- renderPlot({
-    # browser() #for debugging
-    create_phase_histogram_plot(studies, input$brief_title_kw)
-  })
+  # output$distPlot <- renderPlot({
+  #   # browser() #for debugging
+  #   create_phase_histogram_plot(studies, input$brief_title_kw)
+  # })
   
   output$endpointPlot <- renderPlot({
     create_endpoint_histogram(studies, endpoints, input$brief_title_kw)
