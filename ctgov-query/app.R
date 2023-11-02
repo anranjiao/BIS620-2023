@@ -15,6 +15,8 @@ library(DT)
 library(ggplot2)
 library(ctrialsgov)
 
+library(tidyr)
+library(purrr)
 
 # 0. Midterm scheduling 
 

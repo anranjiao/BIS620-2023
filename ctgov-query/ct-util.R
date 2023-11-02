@@ -53,15 +53,7 @@ create_endpoint_histogram = function(studies, endpoints, kw) {
 }
 
 
-
-
-
-
-
-
-# 10/14/2023
-
-
+# 10/11/2023
 con = dbConnect(
   duckdb(
     file.path("..", "..", "duckdb", "ctgov.duckdb"), 
@@ -110,11 +102,15 @@ plot_phase_histogram = function(x) {
     group_by(phase) |>
     summarize(n = n()) 
   
-  ggplot(x, aes(x = phase, y = n)) +
+  fixed_x_labels <- c("NA", "Not Applicable", "Early Phase 1", "Phase 1", "Phase 1/Phase 2", "Phase 2", "Phase 2/Phase 3", "Phase 3", "Phase 4")
+  
+  
+  ggplot(x, aes(x = factor(phase, levels = fixed_x_labels), y = n)) +
     geom_col() +
     theme_bw() +
     xlab("Phase") +
-    ylab("Count")
+    ylab("Count") +
+    scale_x_discrete(labels = fixed_x_labels)
 }
 
 #' Get the number of concurrent trials for each date in a set of studies
