@@ -8,7 +8,7 @@ library(ctrialsgov)
 
 con = dbConnect(
   duckdb(
-    file.path("..", "..", "duckdb", "ctgov.duckdb"),
+    file.path("..", "ctrialsgovdb", "ctrialsgov.duckdb"), 
     read_only = TRUE
   )
 )
@@ -16,6 +16,10 @@ con = dbConnect(
 dbListTables(con)
 studies = tbl(con, "studies")
 sponsors = tbl(con, "sponsors")
+facilities = tbl(con, "facilities")
+countries = tbl(con, "countries")
+facility_investigators = tbl(con, "facility_investigators")
+facility_contacts = tbl(con, "facility_contacts")
 
 ctgov_load_duckdb_file(file.path("..", "..", "duckdb", "ctgov-derived.duckdb")) #derived data
 
@@ -44,3 +48,8 @@ create_phase_histogram_plot(studies, "NASH") #test
 #     scale_y_log10() +
 #     theme_bw()
 # }
+
+
+
+
+

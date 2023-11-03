@@ -101,7 +101,6 @@ plot_phase_histogram = function(x) {
   
   fixed_x_labels <- c("NA", "Not Applicable", "Early Phase 1", "Phase 1", "Phase 1/Phase 2", "Phase 2", "Phase 2/Phase 3", "Phase 3", "Phase 4")
   
-  
   ggplot(x, aes(x = factor(phase, levels = fixed_x_labels), y = n)) +
     geom_col() +
     theme_bw() +
@@ -143,3 +142,12 @@ get_concurrent_trials = function(d) {
 plot_concurrent_studies = function(studies) {
   plot(mtcars$mpg, mtcars$cyl)
 }
+
+
+#' @author Anran Jiao
+#' @title 
+#' @description
+#' A short description...
+#' @param
+#' @return
+

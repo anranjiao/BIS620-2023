@@ -15,7 +15,6 @@ library(DBI)
 library(DT)
 library(ggplot2)
 library(ctrialsgov)
-
 library(tidyr)
 library(purrr)
 
@@ -61,59 +60,72 @@ endpoints = ctgov_query_endpoint()
 ui <- fluidPage(
   
   # Application title
-  titlePanel("Clinical Trials Query"),
+  #titlePanel("Clinical Trials Query"),
+  navbarPage(
+    "Clinical Trials Query",   
+    tabPanel("Basic",  
+             # Sidebar with a slider input for number of bins 
+             sidebarLayout(
+               sidebarPanel(
+                 #          sliderInput("bins",
+                 #                      "Number of bins:",
+                 #                      min = 1,
+                 #                      max = 50,
+                 #                      value = 30),
+                 textInput("brief_title_kw", h3("Brief title keywords")),
+                 
+                 # checkboxGroupInput("source_class", 
+                 #                    label = h3("Sponsor Type"), 
+                 #                    choices = list("Federal" = "FED", 
+                 #                                   "Individual" = "INDIV", 
+                 #                                   "Industry" = "INDUSTRY",
+                 #                                   "Network" = "NETWORK",
+                 #                                   "NIH" = "NIH",
+                 #                                   "Other" = "OTHER",
+                 #                                   "Other gov" = "OTHER_GOV",
+                 #                                   "Unknown" = "UNKNOWN")),
+                 
+                 pickerInput("source_class",
+                             label = h3("Sponsor Type"),
+                             choices = list("Federal" = "FED", 
+                                            "Individual" = "INDIV", 
+                                            "Industry" = "INDUSTRY",
+                                            "Network" = "NETWORK",
+                                            "NIH" = "NIH",
+                                            "Other" = "OTHER",
+                                            "Other gov" = "OTHER_GOV",
+                                            "Unknown" = "UNKNOWN"),
+                             multiple = TRUE,
+                             options = list(`style` = "btn-info",
+                                            `actions-box` = TRUE,
+                                            `selected-text-format`= "count")),
+                 
+                 
+               ),
+               
+               # Show a plot of the generated distribution
+               mainPanel(
+                 tabsetPanel(
+                   type = "tabs",
+                   #tabPanel("Plot", plotOutput("distPlot")),
+                   tabPanel("Phase", plotOutput("phase_plot")),
+                   tabPanel("Concurrent", plotOutput("concurrent_plot")),
+                   tabPanel("Endpoint Met", plotOutput("endpointPlot"))
+                 ),
+                 dataTableOutput("trial_table")
+               )
+               
+             )
+             ),
+    navbarMenu("Facilities", 
+               tabPanel("Feature 1", "four-a"),
+               tabPanel("Feature 2", "four-b")
+    ),
+    tabPanel("Feature", "two"),
+    tabPanel("Feature", "two")
+  ),
   
-  # Sidebar with a slider input for number of bins 
-  sidebarLayout(
-    sidebarPanel(
-      #          sliderInput("bins",
-      #                      "Number of bins:",
-      #                      min = 1,
-      #                      max = 50,
-      #                      value = 30),
-      textInput("brief_title_kw", "Brief title keywords"),
-      
-      # checkboxGroupInput("source_class", 
-      #                    label = h3("Sponsor Type"), 
-      #                    choices = list("Federal" = "FED", 
-      #                                   "Individual" = "INDIV", 
-      #                                   "Industry" = "INDUSTRY",
-      #                                   "Network" = "NETWORK",
-      #                                   "NIH" = "NIH",
-      #                                   "Other" = "OTHER",
-      #                                   "Other gov" = "OTHER_GOV",
-      #                                   "Unknown" = "UNKNOWN")),
-      
-      pickerInput("source_class",
-                  label = h3("Sponsor Type"),
-                  choices = list("Federal" = "FED", 
-                                           "Individual" = "INDIV", 
-                                           "Industry" = "INDUSTRY",
-                                           "Network" = "NETWORK",
-                                           "NIH" = "NIH",
-                                           "Other" = "OTHER",
-                                           "Other gov" = "OTHER_GOV",
-                                           "Unknown" = "UNKNOWN"),
-                  multiple = TRUE,
-                  options = list(`style` = "btn-info",
-                                 `actions-box` = TRUE,
-                                 `selected-text-format`= "count")),
-      
-      
-      ),
-    
-    # Show a plot of the generated distribution
-    mainPanel(
-      tabsetPanel(
-        type = "tabs",
-        #tabPanel("Plot", plotOutput("distPlot")),
-        tabPanel("Endpoint Met", plotOutput("endpointPlot")),
-        tabPanel("Phase", plotOutput("phase_plot")),
-        tabPanel("Concurrent", plotOutput("concurrent_plot"))
-      ),
-      dataTableOutput("trial_table")
-    )
-  )
+  
 )
 
 # Define server logic required to draw a histogram
