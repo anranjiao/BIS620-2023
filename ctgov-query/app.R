@@ -8,6 +8,7 @@
 #
 
 library(shiny)
+library(shinyWidgets)
 library(duckdb)
 library(dplyr)
 library(DBI)
@@ -71,16 +72,34 @@ ui <- fluidPage(
       #                      max = 50,
       #                      value = 30),
       textInput("brief_title_kw", "Brief title keywords"),
-      checkboxGroupInput("source_class", 
-                         label = h3("Sponsor Type"), 
-                         choices = list("Federal" = "FED", 
-                                        "Individual" = "INDIV", 
-                                        "Industry" = "INDUSTRY",
-                                        "Network" = "NETWORK",
-                                        "NIH" = "NIH",
-                                        "Other" = "OTHER",
-                                        "Other gov" = "OTHER_GOV",
-                                        "Unknown" = "UNKNOWN")),
+      
+      # checkboxGroupInput("source_class", 
+      #                    label = h3("Sponsor Type"), 
+      #                    choices = list("Federal" = "FED", 
+      #                                   "Individual" = "INDIV", 
+      #                                   "Industry" = "INDUSTRY",
+      #                                   "Network" = "NETWORK",
+      #                                   "NIH" = "NIH",
+      #                                   "Other" = "OTHER",
+      #                                   "Other gov" = "OTHER_GOV",
+      #                                   "Unknown" = "UNKNOWN")),
+      
+      pickerInput("source_class",
+                  label = h3("Sponsor Type"),
+                  choices = list("Federal" = "FED", 
+                                           "Individual" = "INDIV", 
+                                           "Industry" = "INDUSTRY",
+                                           "Network" = "NETWORK",
+                                           "NIH" = "NIH",
+                                           "Other" = "OTHER",
+                                           "Other gov" = "OTHER_GOV",
+                                           "Unknown" = "UNKNOWN"),
+                  multiple = TRUE,
+                  options = list(`style` = "btn-info",
+                                 `actions-box` = TRUE,
+                                 `selected-text-format`= "count")),
+      
+      
       ),
     
     # Show a plot of the generated distribution
