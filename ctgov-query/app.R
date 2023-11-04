@@ -110,7 +110,8 @@ ui <- fluidPage(
                    #tabPanel("Plot", plotOutput("distPlot")),
                    tabPanel("Phase", plotOutput("phase_plot")),
                    tabPanel("Concurrent", plotOutput("concurrent_plot")),
-                   tabPanel("Endpoint Met", plotOutput("endpointPlot"))
+                   tabPanel("Endpoint Met", plotOutput("endpointPlot")),
+                   tabPanel("Conditions", plotOutput("conditions_plot"))
                  ),
                  dataTableOutput("trial_table")
                )
@@ -197,6 +198,19 @@ server <- function(input, output) {
       rename(`NCT ID` = nct_id, `Brief Title` = brief_title,
              `Start Date` = start_date, `Completion Date` = completion_date)
   })
+  
+  output$conditions_plot = renderPlot({
+    left_join(
+      get_studies() |> 
+        select(nct_id),
+      tbl(con, "conditions") |>
+        select(nct_id, name) |>
+        collect(),
+      by = "nct_id") |>
+      rename(`NCT ID` = nct_id, `conditions` = name) |>
+      plot_conditions_histogram()
+  })
+  
 }
 
 # Run the application 
