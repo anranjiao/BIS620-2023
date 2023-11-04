@@ -109,6 +109,24 @@ plot_phase_histogram = function(x) {
     scale_x_discrete(labels = fixed_x_labels)
 }
 
+plot_conditions_histogram = function(x) {
+  x$conditions[is.na(x$conditions)] = "NA"
+  x = x |>
+    select(conditions) |>
+    group_by(conditions) |>
+    summarize(n = n()) |>
+    arrange(desc(n)) |> 
+    mutate(conditions = factor(conditions, levels = conditions)) |>
+    head(20)
+  
+  ggplot(x, aes(x = conditions, y = n)) +
+    geom_col() +
+    theme_bw() +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+    xlab("Conditions") +
+    ylab("Count")
+}
+
 #' Get the number of concurrent trials for each date in a set of studies
 #' @param d the studies to get the number of concurrent trials for.
 #' @return A tibble with a `date` column and a `count` of the number of
