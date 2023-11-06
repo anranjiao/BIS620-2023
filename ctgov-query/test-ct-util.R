@@ -16,6 +16,9 @@ library(maps)
 library(ggiraph)
 library(RColorBrewer)
 library(RMySQL)
+library(tm)
+library(wordcloud)
+library(stringr)
 
 con = dbConnect(
   duckdb(
@@ -31,6 +34,8 @@ facilities = tbl(con, "facilities")
 countries = tbl(con, "countries")
 facility_investigators = tbl(con, "facility_investigators")
 facility_contacts = tbl(con, "facility_contacts")
+outcomes = tbl(con, "outcomes")
+outcome_analyses = tbl(con,"outcome_analyses")
 
 ctgov_load_duckdb_file(file.path("..", "ctrialsgovdb", "ctgov-derived.duckdb")) #derived data
 
@@ -38,26 +43,21 @@ endpoints = ctgov_query_endpoint()
 
 source("ct-util.R")
 
-#test for plot phase histogram
-plot_phase_histogram(studies |> head(10) |> collect())
+# #test for plot phase histogram
+# plot_phase_histogram(studies |> head(10) |> collect())
 
 
-#test for get concurrent trials
-studies |> head(10) |> collect() |>
-  select(start_date, completion_date) |>
-  get_concurrent_trials() |>
-  ggplot(aes(x = date, y = count)) +
-  geom_line() +
-  xlab("Date") +
-  ylab("Count") +
-  theme_bw()
-
-#test for get trial table
-studies |> head(10) |> collect() |>
-  create_data_table()
-
-#test for end point histogram
-create_endpoint_histogram(studies, endpoints, "NASH")
+# #test for get concurrent trials
+# studies |> head(10) |> collect() |>
+#   select(start_date, completion_date) |>
+#   get_concurrent_trials() |>
+#   ggplot(aes(x = date, y = count)) +
+#   geom_line() +
+#   xlab("Date") +
+#   ylab("Count") +
+#   theme_bw()
+# #test for end point histogram
+# create_endpoint_histogram(studies, endpoints, "NASH")
 
 ###############################################################
 # Added by Anran, Tests for functions in ct-util.R for Feature 1 & 2
@@ -79,13 +79,13 @@ plot_facility_map(facilities_wmap)
 #test for eligibility table
 eligibilities |> 
   head(10) |>
-  select(nct_id, gender, minimum_age, maximum_age, population, criteria) |>
-  rename(`NCT ID` = nct_id)
+  create_data_table()
 
 
 #test for detailed description table
-detailed_descriptions |> 
+eligibilities |> 
   head(10) |>
+  select(nct_id, description, name, url) |>
   rename(`NCT ID` = nct_id, `Conditions` = name)
 
 #test for conditions count plot
@@ -136,3 +136,4 @@ data_Feature_6 = data_Feature_6 |>
   ))
 
 plot_p_value_histogram(data_Feature_6)
+
